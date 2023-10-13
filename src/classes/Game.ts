@@ -35,6 +35,7 @@ export default class Game {
 
             this.snake.move(this.app, this.snakeDirection);
             if (this.snake.hasHeadCollidedWithFood(this.food)) {
+                this.snake.incrementSnakeLength(this.app, this.snakeDirection);
                 this.changeFoodPosition();
             }
         });
