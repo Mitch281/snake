@@ -8,7 +8,7 @@ export default class Snake {
     bodySegmentPositions: Position[] = [];
 
     constructor() {
-        for (let i = 2; i >= 0; i--) {
+        for (let i = 10; i >= 0; i--) {
             this.bodySegmentPositions.push({
                 x: 50 + i * 10,
                 y: 50,
@@ -101,5 +101,21 @@ export default class Snake {
             headPosition.x === food.sprite.position.x &&
             headPosition.y === food.sprite.position.y
         );
+    }
+
+    public hasSnakeHitItself(): boolean {
+        let hasSnakeHitItself = false;
+        this.bodySegmentPositions.forEach((position) => {
+            const duplicatePositions = this.bodySegmentPositions.filter(
+                (innerPosition) =>
+                    innerPosition.x === position.x &&
+                    innerPosition.y === position.y
+            );
+            if (duplicatePositions.length > 1) {
+                hasSnakeHitItself = true;
+            }
+        });
+
+        return hasSnakeHitItself;
     }
 }

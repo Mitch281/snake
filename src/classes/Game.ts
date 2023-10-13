@@ -84,6 +84,10 @@ export default class Game {
             return true;
         }
 
+        if (this.snake.hasSnakeHitItself()) {
+            return true;
+        }
+
         return false;
     }
 
