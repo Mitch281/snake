@@ -1,7 +1,16 @@
 import * as PIXI from "pixi.js";
 import Snake from "./classes/Snake";
 import { SnakeDirection } from "./types";
-import { CANVAS_HEIGHT, CANVAS_WIDTH, SNAKE_SPEED } from "./utils/constants";
+import {
+    CANVAS_HEIGHT,
+    CANVAS_WIDTH,
+    SNAKE_BODYPART_HEIGHT,
+    SNAKE_BODYPART_WIDTH,
+    SNAKE_SPEED,
+} from "./utils/constants";
+
+let gameStarted = false;
+let gameOver = false;
 
 const app = new PIXI.Application<HTMLCanvasElement>({
     width: CANVAS_WIDTH,
@@ -17,7 +26,7 @@ app.stage.addChild(snake.bodySegments[0].sprite);
 let snakeDirection: SnakeDirection = "right";
 
 document.addEventListener("keydown", (e: KeyboardEvent) => {
-    // TODO: Only allow movement if snake head is on a multiple of 10.
+    gameStarted = true;
     switch (e.key) {
         case "ArrowUp":
             snakeDirection = "up";
@@ -34,7 +43,30 @@ document.addEventListener("keydown", (e: KeyboardEvent) => {
     }
 });
 
+function detectGameOver() {
+    const headSprite = snake.getHeadSprite();
+    if (
+        headSprite.x === 0 ||
+        headSprite.x == CANVAS_WIDTH - SNAKE_BODYPART_WIDTH
+    ) {
+        return true;
+    }
+    if (
+        headSprite.y === 0 ||
+        headSprite.y === CANVAS_HEIGHT - SNAKE_BODYPART_HEIGHT
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
 app.ticker.add(() => {
+    gameOver = detectGameOver();
+    if (!gameStarted || gameOver) {
+        return;
+    }
+
     switch (snakeDirection) {
         case "up":
             snake.bodySegments[0].sprite.y -= SNAKE_SPEED;
