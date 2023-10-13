@@ -65,5 +65,5 @@ app.ticker.add(() => {
         return;
     }
 
-    snake.move(snakeDirection);
+    snake.move(app, snakeDirection);
 });
