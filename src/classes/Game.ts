@@ -1,11 +1,14 @@
 import * as PIXI from "pixi.js";
 import { SnakeDirection } from "../types";
 import {
-    CANVAS_HEIGHT,
     CANVAS_WIDTH,
     SNAKE_BODYPART_HEIGHT,
     SNAKE_BODYPART_WIDTH,
 } from "../utils/constants";
+import randomIntFromInterval from "../utils/random-int-from-interval";
+import roundNumberToNearestTen from "../utils/round-number-to-nearest-ten";
+import { CANVAS_HEIGHT } from "./../utils/constants";
+import Food from "./Food";
 import Snake from "./Snake";
 
 export default class Game {
@@ -16,13 +19,11 @@ export default class Game {
         height: CANVAS_HEIGHT,
     });
     snake = new Snake();
+    food: Food;
     snakeDirection: SnakeDirection = "right";
 
-    constructor() {
-        this.setupCanvas();
-    }
-
     public run() {
+        this.setupCanvas();
         this.addStartGameListener();
         this.app.ticker.add(() => {
             this.gameOver = this.detectGameOver();
@@ -38,6 +39,8 @@ export default class Game {
         const appDiv = document.querySelector("#app");
         appDiv?.appendChild(this.app.view);
         this.snake.render(this.app);
+        this.generateFood();
+        this.food.render(this.app);
     }
 
     private addStartGameListener() {
@@ -76,5 +79,16 @@ export default class Game {
         }
 
         return false;
+    }
+
+    private generateFood() {
+        const randomXPosition = roundNumberToNearestTen(
+            randomIntFromInterval(0, CANVAS_WIDTH - SNAKE_BODYPART_WIDTH)
+        );
+        const randomYPosition = roundNumberToNearestTen(
+            randomIntFromInterval(0, CANVAS_HEIGHT - SNAKE_BODYPART_HEIGHT)
+        );
+        const foodPosition = { x: randomXPosition, y: randomYPosition };
+        this.food = new Food(foodPosition);
     }
 }
