@@ -1,7 +1,8 @@
 import * as PIXI from "pixi.js";
-import { SnakeDirection } from "../types";
+import { Position, SnakeDirection } from "../types";
 import {
     CANVAS_WIDTH,
+    MAX_FPS,
     SNAKE_BODYPART_HEIGHT,
     SNAKE_BODYPART_WIDTH,
 } from "../utils/constants";
@@ -25,6 +26,7 @@ export default class Game {
     public run() {
         this.setupCanvas();
         this.addStartGameListener();
+        this.app.ticker.maxFPS = MAX_FPS;
         this.app.ticker.add(() => {
             this.gameOver = this.detectGameOver();
             if (!this.gameStarted || this.gameOver) {
@@ -32,6 +34,9 @@ export default class Game {
             }
 
             this.snake.move(this.app, this.snakeDirection);
+            if (this.snake.hasHeadCollidedWithFood(this.food)) {
+                this.changeFoodPosition();
+            }
         });
     }
 
@@ -81,14 +86,27 @@ export default class Game {
         return false;
     }
 
-    private generateFood() {
+    private generateRandomFoodPosition(): Position {
         const randomXPosition = roundNumberToNearestTen(
             randomIntFromInterval(0, CANVAS_WIDTH - SNAKE_BODYPART_WIDTH)
         );
         const randomYPosition = roundNumberToNearestTen(
             randomIntFromInterval(0, CANVAS_HEIGHT - SNAKE_BODYPART_HEIGHT)
         );
-        const foodPosition = { x: randomXPosition, y: randomYPosition };
+        return {
+            x: randomXPosition,
+            y: randomYPosition,
+        };
+    }
+
+    private generateFood() {
+        const foodPosition = this.generateRandomFoodPosition();
         this.food = new Food(foodPosition);
+    }
+
+    private changeFoodPosition() {
+        const foodPosition = this.generateRandomFoodPosition();
+        this.food.sprite.position.x = foodPosition.x;
+        this.food.sprite.position.y = foodPosition.y;
     }
 }

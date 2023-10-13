@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { Position, SnakeDirection } from "../types";
 import BodySegment from "./BodySegment";
+import Food from "./Food";
 
 export default class Snake {
     bodySegments: BodySegment[];
@@ -61,5 +62,13 @@ export default class Snake {
             bodySegment.sprite.destroy()
         );
         this.render(app);
+    }
+
+    public hasHeadCollidedWithFood(food: Food) {
+        const headPosition = this.bodySegmentPositions[0];
+        return (
+            headPosition.x === food.sprite.position.x &&
+            headPosition.y === food.sprite.position.y
+        );
     }
 }

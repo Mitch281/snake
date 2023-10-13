@@ -7,3 +7,5 @@ export const SNAKE_SPEED = 10;
 
 export const FOOD_WIDTH = SNAKE_BODYPART_WIDTH;
 export const FOOD_HEIGHT = SNAKE_BODYPART_HEIGHT;
+
+export const MAX_FPS = 20;
