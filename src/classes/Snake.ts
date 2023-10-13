@@ -1,11 +1,10 @@
 import * as PIXI from "pixi.js";
-import { PivotPoint, Position, SnakeDirection } from "../types";
+import { Position, SnakeDirection } from "../types";
 import BodySegment from "./BodySegment";
 
 export default class Snake {
     bodySegments: BodySegment[];
     bodySegmentPositions: Position[] = [];
-    pivotPoints: PivotPoint[] = [];
 
     constructor() {
         for (let i = 2; i >= 0; i--) {
@@ -17,39 +16,6 @@ export default class Snake {
         this.bodySegments = this.bodySegmentPositions.map(
             (position) => new BodySegment(position)
         );
-        this.addMovementListener();
-    }
-
-    private addMovementListener() {
-        document.addEventListener("keydown", (e: KeyboardEvent) => {
-            const headPosition = this.getHeadSprite().position;
-            switch (e.key) {
-                case "ArrowUp":
-                    this.pivotPoints.push({
-                        direction: "up",
-                        position: headPosition,
-                    });
-                    break;
-                case "ArrowDown":
-                    this.pivotPoints.push({
-                        direction: "down",
-                        position: headPosition,
-                    });
-                    break;
-                case "ArrowRight":
-                    this.pivotPoints.push({
-                        direction: "right",
-                        position: headPosition,
-                    });
-                    break;
-                case "ArrowLeft":
-                    this.pivotPoints.push({
-                        direction: "left",
-                        position: headPosition,
-                    });
-                    break;
-            }
-        });
     }
 
     public getHeadSprite(): PIXI.Sprite {
