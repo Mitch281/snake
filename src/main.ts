@@ -1,24 +1,52 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import * as PIXI from "pixi.js";
+import { SnakeDirection } from "./types";
+import { CANVAS_HEIGHT, CANVAS_WIDTH, SNAKE_SPEED } from "./utils/constants";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const app = new PIXI.Application<HTMLCanvasElement>({
+    width: CANVAS_WIDTH,
+    height: CANVAS_HEIGHT,
+});
+const appDiv = document.querySelector("#app");
+appDiv?.appendChild(app.view);
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const bodySegment = PIXI.Sprite.from("/assets/body-segment.png");
+bodySegment.x = 50;
+bodySegment.y = 50;
+
+app.stage.addChild(bodySegment);
+
+let snakeDirection: SnakeDirection = "right";
+
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+    switch (e.key) {
+        case "ArrowUp":
+            snakeDirection = "up";
+            break;
+        case "ArrowDown":
+            snakeDirection = "down";
+            break;
+        case "ArrowRight":
+            snakeDirection = "right";
+            break;
+        case "ArrowLeft":
+            snakeDirection = "left";
+            break;
+    }
+});
+
+app.ticker.add((delta) => {
+    switch (snakeDirection) {
+        case "up":
+            bodySegment.y -= SNAKE_SPEED;
+            break;
+        case "down":
+            bodySegment.y += SNAKE_SPEED;
+            break;
+        case "right":
+            bodySegment.x += SNAKE_SPEED;
+            break;
+        case "left":
+            bodySegment.x -= SNAKE_SPEED;
+            break;
+    }
+});
