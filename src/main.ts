@@ -6,7 +6,6 @@ import {
     CANVAS_WIDTH,
     SNAKE_BODYPART_HEIGHT,
     SNAKE_BODYPART_WIDTH,
-    SNAKE_SPEED,
 } from "./utils/constants";
 
 let gameStarted = false;
@@ -20,8 +19,7 @@ const appDiv = document.querySelector("#app");
 appDiv?.appendChild(app.view);
 
 const snake = new Snake();
-
-app.stage.addChild(snake.bodySegments[0].sprite);
+snake.render(app);
 
 let snakeDirection: SnakeDirection = "right";
 
@@ -67,18 +65,5 @@ app.ticker.add(() => {
         return;
     }
 
-    switch (snakeDirection) {
-        case "up":
-            snake.bodySegments[0].sprite.y -= SNAKE_SPEED;
-            break;
-        case "down":
-            snake.bodySegments[0].sprite.y += SNAKE_SPEED;
-            break;
-        case "right":
-            snake.bodySegments[0].sprite.x += SNAKE_SPEED;
-            break;
-        case "left":
-            snake.bodySegments[0].sprite.x -= SNAKE_SPEED;
-            break;
-    }
+    snake.move(snakeDirection);
 });
