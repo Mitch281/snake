@@ -54,15 +54,27 @@ export default class Game {
             this.gameStarted = true;
             switch (e.key) {
                 case "ArrowUp":
+                    if (this.snakeDirection === "down") {
+                        return;
+                    }
                     this.snakeDirection = "up";
                     break;
                 case "ArrowDown":
+                    if (this.snakeDirection === "up") {
+                        return;
+                    }
                     this.snakeDirection = "down";
                     break;
                 case "ArrowRight":
+                    if (this.snakeDirection === "left") {
+                        return;
+                    }
                     this.snakeDirection = "right";
                     break;
                 case "ArrowLeft":
+                    if (this.snakeDirection === "right") {
+                        return;
+                    }
                     this.snakeDirection = "left";
                     break;
             }
