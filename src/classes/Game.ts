@@ -1,13 +1,10 @@
 import * as PIXI from "pixi.js";
-import { Position, SnakeDirection } from "../types";
+import { SnakeDirection } from "../types";
 import {
     CANVAS_WIDTH,
-    MAX_FPS,
     SNAKE_BODYPART_HEIGHT,
     SNAKE_BODYPART_WIDTH,
 } from "../utils/constants";
-import randomIntFromInterval from "../utils/random-int-from-interval";
-import roundNumberToNearestTen from "../utils/round-number-to-nearest-ten";
 import { CANVAS_HEIGHT } from "./../utils/constants";
 import Food from "./Food";
 import Snake from "./Snake";
@@ -15,38 +12,34 @@ import Snake from "./Snake";
 export default class Game {
     gameStarted = false;
     gameOver = true;
-    app = new PIXI.Application<HTMLCanvasElement>({
-        width: CANVAS_WIDTH,
-        height: CANVAS_HEIGHT,
-    });
     snake = new Snake();
     food: Food;
     snakeDirection: SnakeDirection = "right";
 
-    public run() {
-        this.setupCanvas();
+    public run(app: PIXI.Application<HTMLCanvasElement>) {
+        this.initialiseSnakeAndFoodRendering(app);
         this.addStartGameListener();
-        this.app.ticker.maxFPS = MAX_FPS;
-        this.app.ticker.add(() => {
+        app.ticker.add(() => {
             this.gameOver = this.detectGameOver();
             if (!this.gameStarted || this.gameOver) {
                 return;
             }
 
-            this.snake.move(this.app, this.snakeDirection);
+            this.snake.move(app, this.snakeDirection);
             if (this.snake.hasHeadCollidedWithFood(this.food)) {
-                this.snake.incrementSnakeLength(this.app, this.snakeDirection);
+                this.snake.incrementSnakeLength(app, this.snakeDirection);
                 this.changeFoodPosition();
             }
         });
     }
 
-    private setupCanvas() {
-        const appDiv = document.querySelector("#app");
-        appDiv?.appendChild(this.app.view);
-        this.snake.render(this.app);
-        this.generateFood();
-        this.food.render(this.app);
+    private initialiseSnakeAndFoodRendering(
+        app: PIXI.Application<HTMLCanvasElement>
+    ) {
+        this.snake.render(app);
+        const randomFoodPosition = Food.generateRandomFoodPosition();
+        this.food = new Food(randomFoodPosition);
+        this.food.render(app);
     }
 
     private addStartGameListener() {
@@ -103,26 +96,8 @@ export default class Game {
         return false;
     }
 
-    private generateRandomFoodPosition(): Position {
-        const randomXPosition = roundNumberToNearestTen(
-            randomIntFromInterval(0, CANVAS_WIDTH - SNAKE_BODYPART_WIDTH)
-        );
-        const randomYPosition = roundNumberToNearestTen(
-            randomIntFromInterval(0, CANVAS_HEIGHT - SNAKE_BODYPART_HEIGHT)
-        );
-        return {
-            x: randomXPosition,
-            y: randomYPosition,
-        };
-    }
-
-    private generateFood() {
-        const foodPosition = this.generateRandomFoodPosition();
-        this.food = new Food(foodPosition);
-    }
-
     private changeFoodPosition() {
-        const foodPosition = this.generateRandomFoodPosition();
+        const foodPosition = Food.generateRandomFoodPosition();
         this.food.sprite.position.x = foodPosition.x;
         this.food.sprite.position.y = foodPosition.y;
     }
